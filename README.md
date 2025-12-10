@@ -2,7 +2,7 @@
 ## About
 Provider implementation for ARCTIC's Shard layer
 
-OpenStackShard is the official OpenStack provider plugin for ARCTIC (Automatic Range Creation Tool and Integrated Console). This plugin allows ARCTIC to provision full cyber environments directly on OpenStack — including networks, volumes, security groups, routers, and compute instances.
+OpenStackShard is the official OpenStack provider plugin for ARCTIC (Automated Range Creation Tool and Integrated Console). This plugin allows ARCTIC to provision full cyber environments directly on OpenStack — including networks, volumes, security groups, routers, and compute instances.
 
 ## Features
 OpenStackShard supports building all core OpenStack resources required for a cyber range:
