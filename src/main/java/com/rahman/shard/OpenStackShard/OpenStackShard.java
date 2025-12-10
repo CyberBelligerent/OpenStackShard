@@ -32,7 +32,6 @@ import com.rahman.arctic.shard.objects.ArcticSecurityGroupRuleSO;
 import com.rahman.arctic.shard.objects.ArcticSecurityGroupSO;
 import com.rahman.arctic.shard.objects.ArcticTask;
 import com.rahman.arctic.shard.objects.ArcticVolumeSO;
-import com.rahman.arctic.shard.util.UserDataHelper;
 import com.rahman.shard.OpenStackShard.ui.ObtainFlavors;
 import com.rahman.shard.OpenStackShard.ui.ObtainOS;
 
@@ -115,9 +114,9 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 			public Server action() {
 				ServerCreateBuilder scb = Builders.server();
 				
-				if(ah.getOsType().equalsIgnoreCase("linux")) {
-					scb.userData(UserDataHelper.createBasicLinuxUserData(ah.getDefaultUser(), ah.getDefaultPassword()));
-				}
+				//if(ah.getOsType().equalsIgnoreCase("linux")) {
+				//	scb.userData(UserDataHelper.createBasicLinuxUserData(ah.getDefaultUser(), ah.getDefaultPassword()));
+				//}
 				
 				scb.configDrive(true);
 				scb.name(ah.getName());
