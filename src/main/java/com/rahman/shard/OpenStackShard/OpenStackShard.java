@@ -52,10 +52,11 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		System.out.println("Attempting to Create OpenStack Client...");
 		
 		System.out.println("Attempting to load properties...");
-		String endpoint = getProperties().getPropertyValue("endpoint");
-		String username = getProperties().getPropertyValue("username");
-		String password = getProperties().getPropertyValue("password");
-		String projectId = getProperties().getPropertyValue("projectId");
+		
+		String endpoint = getConfiguration("endpoint");
+		String username = getConfiguration("username");
+		String password = getConfiguration("password");
+		String projectId = getConfiguration("projectId");
 		
 		if(endpoint == null || username == null || password == null || projectId == null) {
 			System.out.println("Required configuration details do not exists. Please add and re-run.");
@@ -63,11 +64,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 			return null;
 		}
 		
-		String domain = getProperties().getPropertyValue("domain");
-		
-		if(domain == null) {
-			domain = "Default";
-		}
+		String domain = getConfigurationOrDefault("domain", "Default");
 		
 		System.out.println("Connecting with the following options:");
 		System.out.println("\tEndpoint: " + endpoint);
