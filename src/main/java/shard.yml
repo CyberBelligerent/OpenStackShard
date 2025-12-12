@@ -1,2 +1,14 @@
 class: com.rahman.shard.OpenStackShard.OpenStackShard
 verision: 1.0
+
+config_settings:
+	endpoint:
+		type: "string"
+	username:
+		type: "string"
+	password:
+		type: "string"
+	projectId:
+		type: "string"
+	domain:
+		type: "string"
