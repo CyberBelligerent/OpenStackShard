@@ -26,7 +26,7 @@ OpenStackShard supports building all core OpenStack resources required for a cyb
 - Volume Wait Logic
 
 ## Configuration
-Once the plugin is dropped into ARCTIC's ```/providers``` directory, the provider UI will eventually expose the following fields:
+Once the plugin is dropped into ARCTIC's ```/providers``` directory, the provider UI will ~~eventually~~ expose the following fields:
 - endpoint / required / Keystone v3 auth URL
 - username / required / Project-scoped username
 - password / required / Account password
