@@ -180,7 +180,6 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.build());
 				netObj.getSubnets().add(s.getId());
 				return netObj;
-//				setResource(netObj);
 			}
 
 			@Override
@@ -202,7 +201,6 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.name(asg.getName())
 						.description(asg.getDescription())
 						.build());
-//				setResource(sg);
 				return sg;
 			}
 
@@ -266,7 +264,6 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.bootable(av.isBootable())
 						.build());
 				return v;
-//				setResource(v);
 			}
 
 			@Override
@@ -303,7 +300,6 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.portRangeMax(asgr.getEndPortRange())
 						.build()
 					);
-//				setResource(sgr);
 				//String endMessage = String.format("Security Rule Done: %s %s %s-%s", dir, protocol, String.valueOf(r1), String.valueOf(r2));
 				//IcebergViewer.sendConsoleBuildUpdate(re, new ConsoleMessage(endMessage));
 				return sgr;
@@ -317,29 +313,5 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		};
 		return rule;
 	}
-
-//	@Override
-//	public CompletableFuture<List<ProviderImage>> obtainOS() {
-//		return CompletableFuture.supplyAsync(() -> {
-//            List<ProviderImage> images = new ArrayList<>();
-//            List<? extends Image> osImages = OSFactory.clientFromToken(getClient().getToken()).imagesV2().list();
-//            osImages.forEach(e -> {
-//                images.add(new ProviderImage(e.getId(), e.getName()));
-//            });
-//            return images;
-//        });
-//	}
-//
-//	@Override
-//	public CompletableFuture<List<ProviderFlavor>> obtainFlavors() {
-//		return CompletableFuture.supplyAsync(() -> {
-//            List<ProviderFlavor> images = new ArrayList<>();
-//            List<? extends Flavor> osImages = OSFactory.clientFromToken(getClient().getToken()).compute().flavors().list();
-//            osImages.forEach(e -> {
-//                images.add(new ProviderFlavor(e.getId(), e.getName()));
-//            });
-//            return images;
-//        });
-//	}
 
 }
