@@ -1,5 +1,4 @@
 class: com.rahman.shard.OpenStackShard.OpenStackShard
-verision: 1.0
 
 config_settings:
 	endpoint:
