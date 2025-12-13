@@ -42,9 +42,15 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		return "openstack";
 	}
 	
+	@Override
 	public void pluginEnabled() {
 		registerUICreation(new ObtainOS());
 		registerUICreation(new ObtainFlavors());
+	}
+	
+	@Override
+	public void pluginDisabled() {
+		System.out.println("Shutting down OpenStack Shard...");
 	}
 	
 	@Override
