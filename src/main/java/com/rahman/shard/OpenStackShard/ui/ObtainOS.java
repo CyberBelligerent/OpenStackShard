@@ -8,7 +8,6 @@ import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.image.v2.Image;
 import org.openstack4j.openstack.OSFactory;
 
-import com.rahman.arctic.shard.objects.providers.ProviderImage;
 import com.rahman.arctic.shard.shards.ShardProviderUICreation;
 import com.rahman.arctic.shard.shards.UIField;
 

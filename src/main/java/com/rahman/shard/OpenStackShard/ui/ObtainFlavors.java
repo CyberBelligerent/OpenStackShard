@@ -8,7 +8,6 @@ import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.openstack.OSFactory;
 
-import com.rahman.arctic.shard.objects.providers.ProviderFlavor;
 import com.rahman.arctic.shard.shards.ShardProviderUICreation;
 import com.rahman.arctic.shard.shards.UIField;
 
