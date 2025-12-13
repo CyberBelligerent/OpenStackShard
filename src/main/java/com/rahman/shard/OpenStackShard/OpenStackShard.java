@@ -22,16 +22,16 @@ import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.openstack.OSFactory;
 
 import com.rahman.arctic.shard.ShardProviderTmpl;
-import com.rahman.arctic.shard.Waiter;
 import com.rahman.arctic.shard.exceptions.ResourceErrorException;
 import com.rahman.arctic.shard.exceptions.ResourceTimeoutException;
-import com.rahman.arctic.shard.objects.ArcticHostSO;
-import com.rahman.arctic.shard.objects.ArcticNetworkSO;
-import com.rahman.arctic.shard.objects.ArcticRouterSO;
-import com.rahman.arctic.shard.objects.ArcticSecurityGroupRuleSO;
-import com.rahman.arctic.shard.objects.ArcticSecurityGroupSO;
 import com.rahman.arctic.shard.objects.ArcticTask;
-import com.rahman.arctic.shard.objects.ArcticVolumeSO;
+import com.rahman.arctic.shard.objects.Waiter;
+import com.rahman.arctic.shard.objects.abstraction.ArcticHostSO;
+import com.rahman.arctic.shard.objects.abstraction.ArcticNetworkSO;
+import com.rahman.arctic.shard.objects.abstraction.ArcticRouterSO;
+import com.rahman.arctic.shard.objects.abstraction.ArcticSecurityGroupRuleSO;
+import com.rahman.arctic.shard.objects.abstraction.ArcticSecurityGroupSO;
+import com.rahman.arctic.shard.objects.abstraction.ArcticVolumeSO;
 import com.rahman.shard.OpenStackShard.ui.ObtainFlavors;
 import com.rahman.shard.OpenStackShard.ui.ObtainOS;
 
