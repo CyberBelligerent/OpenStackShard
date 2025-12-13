@@ -6,11 +6,11 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.State;
 import org.openstack4j.model.storage.block.Volume;
 
-import com.rahman.arctic.shard.Waiter;
 import com.rahman.arctic.shard.exceptions.ResourceErrorException;
 import com.rahman.arctic.shard.exceptions.ResourceTimeoutException;
 import com.rahman.arctic.shard.messaging.ConsoleMessage;
 import com.rahman.arctic.shard.messaging.IcebergViewer;
+import com.rahman.arctic.shard.objects.Waiter;
 
 public class OpenStackWaiter {
 
