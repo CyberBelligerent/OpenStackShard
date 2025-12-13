@@ -1,4 +1,4 @@
-package com.rahman.shard.OpenStackShard.ui;
+package com.rahman.openstackshard.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.openstack4j.openstack.OSFactory;
 
 import com.rahman.arctic.shard.shards.ShardProviderUICreation;
 import com.rahman.arctic.shard.shards.UIField;
-import com.rahman.shard.OpenStackShard.objects.OpenStackProviderItem;
+import com.rahman.openstackshard.objects.OpenStackProviderItem;
 
 public class ObtainOS extends ShardProviderUICreation<OpenStackProviderItem> {
 

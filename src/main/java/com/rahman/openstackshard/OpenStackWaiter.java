@@ -1,4 +1,4 @@
-package com.rahman.shard.OpenStackShard;
+package com.rahman.openstackshard;
 
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.compute.Server;

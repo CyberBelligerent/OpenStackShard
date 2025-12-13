@@ -1,15 +1,15 @@
-class: com.rahman.shard.OpenStackShard.OpenStackShard
+class: com.rahman.openstackshard.OpenStackShard
 version: 1.0
 
 config_settings:
   endpoint:
-    type: "string"
+    type: "url"
     required: true
   username:
     type: "string"
     required: true
   password:
-    type: "string"
+    type: "password"
     required: true
   projectId:
     type: "string"

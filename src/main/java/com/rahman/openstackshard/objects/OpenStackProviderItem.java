@@ -1,4 +1,4 @@
-package com.rahman.shard.OpenStackShard.objects;
+package com.rahman.openstackshard.objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

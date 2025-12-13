@@ -1,4 +1,4 @@
-package com.rahman.shard.OpenStackShard;
+package com.rahman.openstackshard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,8 @@ import com.rahman.arctic.shard.objects.abstraction.ArcticRouterSO;
 import com.rahman.arctic.shard.objects.abstraction.ArcticSecurityGroupRuleSO;
 import com.rahman.arctic.shard.objects.abstraction.ArcticSecurityGroupSO;
 import com.rahman.arctic.shard.objects.abstraction.ArcticVolumeSO;
-import com.rahman.shard.OpenStackShard.ui.ObtainFlavors;
-import com.rahman.shard.OpenStackShard.ui.ObtainOS;
+import com.rahman.openstackshard.ui.ObtainFlavors;
+import com.rahman.openstackshard.ui.ObtainOS;
 
 public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 
@@ -56,7 +56,6 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	@Override
 	public OSClientV3 createClient() {
 		System.out.println("Attempting to Create OpenStack Client...");
-		
 		System.out.println("Attempting to load properties...");
 		
 		String endpoint = getConfiguration("endpoint");
@@ -65,8 +64,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		String projectId = getConfiguration("projectId");
 		
 		if(endpoint == null || username == null || password == null || projectId == null) {
-			System.out.println("Required configuration details do not exists. Please add and re-run.");
-			System.exit(1);
+			failWithMessage("Required configuration details do not exists. Please add and re-run.");
 			return null;
 		}
 		
