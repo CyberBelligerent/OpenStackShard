@@ -10,16 +10,17 @@ import org.openstack4j.openstack.OSFactory;
 
 import com.rahman.arctic.shard.shards.ShardProviderUICreation;
 import com.rahman.arctic.shard.shards.UIField;
+import com.rahman.shard.OpenStackShard.objects.OpenStackProviderItem;
 
-public class ObtainOS extends ShardProviderUICreation<ProviderImage> {
+public class ObtainOS extends ShardProviderUICreation<OpenStackProviderItem> {
 
 	@UIField(key = "osId", label = "Openstack Image")
-	public CompletableFuture<List<ProviderImage>> returnResult() {
+	public CompletableFuture<List<OpenStackProviderItem>> returnResult() {
 		return CompletableFuture.supplyAsync(() -> {
-            List<ProviderImage> images = new ArrayList<>();
+            List<OpenStackProviderItem> images = new ArrayList<>();
             List<? extends Image> osImages = OSFactory.clientFromToken(getClient(OSClientV3.class).getToken()).imagesV2().list();
             osImages.forEach(e -> {
-                images.add(new ProviderImage(e.getId(), e.getName()));
+                images.add(new OpenStackProviderItem(e.getId(), e.getName()));
             });
             return images;
         });
