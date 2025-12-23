@@ -12,13 +12,13 @@ import com.rahman.arctic.shard.shards.ShardProviderUICreation;
 import com.rahman.arctic.shard.shards.UIField;
 import com.rahman.openstackshard.objects.OpenStackProviderItem;
 
-public class ObtainFlavors extends ShardProviderUICreation<OpenStackProviderItem> {
+public class ObtainFlavors extends ShardProviderUICreation<OSClientV3, OpenStackProviderItem> {
 
 	@UIField(key = "flavorId", label = "Openstack Flavor")
 	public CompletableFuture<List<OpenStackProviderItem>> returnResult() {
 		return CompletableFuture.supplyAsync(() -> {
             List<OpenStackProviderItem> images = new ArrayList<>();
-            List<? extends Flavor> osImages = OSFactory.clientFromToken(getClient(OSClientV3.class).getToken()).compute().flavors().list();
+            List<? extends Flavor> osImages = OSFactory.clientFromToken(getClient().getToken()).compute().flavors().list();
             osImages.forEach(e -> {
                 images.add(new OpenStackProviderItem(e.getId(), e.getName()));
             });
