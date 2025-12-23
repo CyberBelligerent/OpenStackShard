@@ -22,6 +22,8 @@ import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.openstack.OSFactory;
 
 import com.rahman.arctic.shard.ShardProviderTmpl;
+import com.rahman.arctic.shard.ShardRunningContext;
+import com.rahman.arctic.shard.configuration.ShardProfileSettingsReference;
 import com.rahman.arctic.shard.exceptions.ResourceErrorException;
 import com.rahman.arctic.shard.exceptions.ResourceTimeoutException;
 import com.rahman.arctic.shard.objects.ArcticTask;
@@ -54,21 +56,21 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 	
 	@Override
-	public OSClientV3 createClient() {
+	public OSClientV3 createClient(ShardProfileSettingsReference config) {
 		System.out.println("Attempting to Create OpenStack Client...");
 		System.out.println("Attempting to load properties...");
 		
-		String endpoint = getConfiguration("endpoint");
-		String username = getConfiguration("username");
-		String password = getConfiguration("password");
-		String projectId = getConfiguration("projectId");
+		String endpoint = config.getConfiguration("endpoint");
+		String username = config.getConfiguration("username");
+		String password = config.getConfiguration("password");
+		String projectId = config.getConfiguration("projectId");
 		
 		if(endpoint == null || username == null || password == null || projectId == null) {
 			failWithMessage("Required configuration details do not exists. Please add and re-run.");
 			return null;
 		}
 		
-		String domain = getConfigurationOrDefault("domain", "Default");
+		String domain = config.getConfigurationOrDefault("domain", "Default");
 		
 		System.out.println("Connecting with the following options:");
 		System.out.println("\tEndpoint: " + endpoint);
@@ -90,7 +92,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 
 	@Override
-	protected ArcticTask<OSClientV3, Server> buildHost(ArcticHostSO ah) {
+	protected ArcticTask<OSClientV3, Server> buildHost(ShardRunningContext<OSClientV3> context, ArcticHostSO ah) {
 		// Create the lists that will hold the dependencies needed further into the method
 		List<ArcticTask<OSClientV3, Volume>> volumes = new ArrayList<>();
 		List<ArcticTask<OSClientV3, Network>> networks = new ArrayList<>();
@@ -99,17 +101,17 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		// Grab all networks and volumes from ArcticHost and add
 		// 		them into the lists above
 		ah.getNetworks().forEach(e -> {
-			networks.add(getTypedTask(getNetworkTasks(), e));
-			depends.add(getNetworkTasks().get(e));
+			networks.add(getTypedTask(context.getNetworkTasks(), e));
+			depends.add(context.getNetworkTasks().get(e));
 		});
 		
 		ah.getVolumes().forEach(e -> {
-			volumes.add(getTypedTask(getVolumeTasks(), e));
-			depends.add(getVolumeTasks().get(e));
+			volumes.add(getTypedTask(context.getVolumeTasks(), e));
+			depends.add(context.getVolumeTasks().get(e));
 		});
 		
 		// Create the ArcticTask<Client, Resource>
-		ArcticTask<OSClientV3, Server> server = new ArcticTask<OSClientV3, Server>(10, getClient(), depends) {
+		ArcticTask<OSClientV3, Server> server = new ArcticTask<OSClientV3, Server>(10, context.getClient(), depends) {
 			
 			// Actual action of building the Server following OSClientV3 Library
 			public Server action() {
@@ -160,8 +162,8 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 	
 	@Override
-	protected ArcticTask<OSClientV3, Network> buildNetwork(ArcticNetworkSO an) {
-		ArcticTask<OSClientV3, Network> net =  new ArcticTask<OSClientV3, Network>(0, getClient()) {
+	protected ArcticTask<OSClientV3, Network> buildNetwork(ShardRunningContext<OSClientV3> context, ArcticNetworkSO an) {
+		ArcticTask<OSClientV3, Network> net =  new ArcticTask<OSClientV3, Network>(0, context.getClient()) {
 			public Network action() {
 				Network netObj = OSFactory.clientFromToken(getClient().getToken()).networking().network().create(Builders.network()
 						.name(an.getName())
@@ -198,8 +200,8 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 
 	@Override
-	protected ArcticTask<OSClientV3, SecurityGroup> buildSecurityGroup(ArcticSecurityGroupSO asg) {
-		ArcticTask<OSClientV3, SecurityGroup> secGroup = new ArcticTask<OSClientV3, SecurityGroup>(4, getClient()) {
+	protected ArcticTask<OSClientV3, SecurityGroup> buildSecurityGroup(ShardRunningContext<OSClientV3> context, ArcticSecurityGroupSO asg) {
+		ArcticTask<OSClientV3, SecurityGroup> secGroup = new ArcticTask<OSClientV3, SecurityGroup>(4, context.getClient()) {
 			public SecurityGroup action() {
 				SecurityGroup sg = OSFactory.clientFromToken(getClient().getToken()).networking().securitygroup().create(Builders.securityGroup()
 						.name(asg.getName())
@@ -218,16 +220,16 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 
 	@Override
-	protected ArcticTask<OSClientV3, Router> buildRouter(ArcticRouterSO ar) {
+	protected ArcticTask<OSClientV3, Router> buildRouter(ShardRunningContext<OSClientV3> context, ArcticRouterSO ar) {
 		List<ArcticTask<OSClientV3, Network>> networks = new ArrayList<>();
 		List<ArcticTask<OSClientV3, ?>> depends = new ArrayList<>();
 		
 		ar.getConnectedNetworkNames().forEach(e -> {
-			networks.add(getTypedTask(getNetworkTasks(), e));
-			depends.add(getNetworkTasks().get(e));
+			networks.add(getTypedTask(context.getNetworkTasks(), e));
+			depends.add(context.getNetworkTasks().get(e));
 		});
 		
-		ArcticTask<OSClientV3, Router> router = new ArcticTask<OSClientV3, Router>(1, getClient(), depends) {
+		ArcticTask<OSClientV3, Router> router = new ArcticTask<OSClientV3, Router>(1, context.getClient(), depends) {
 			public Router action() {
 				OSClientV3 client = OSFactory.clientFromToken(getClient().getToken());
 				
@@ -257,8 +259,8 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 
 	@Override
-	protected ArcticTask<OSClientV3, Volume> buildVolume(ArcticVolumeSO av) {
-		ArcticTask<OSClientV3, Volume> vol = new ArcticTask<OSClientV3, Volume>(2, getClient()) {
+	protected ArcticTask<OSClientV3, Volume> buildVolume(ShardRunningContext<OSClientV3> context, ArcticVolumeSO av) {
+		ArcticTask<OSClientV3, Volume> vol = new ArcticTask<OSClientV3, Volume>(2, context.getClient()) {
 			public Volume action() {
 				Volume v = OSFactory.clientFromToken(getClient().getToken()).blockStorage().volumes().create(Builders.volume()
 						.name(av.getName())
@@ -286,11 +288,11 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 	}
 
 	@Override
-	protected ArcticTask<OSClientV3, SecurityGroupRule> buildSecurityGroupRule(ArcticSecurityGroupRuleSO asgr) {
+	protected ArcticTask<OSClientV3, SecurityGroupRule> buildSecurityGroupRule(ShardRunningContext<OSClientV3> context, ArcticSecurityGroupRuleSO asgr) {
 		@SuppressWarnings("unchecked")
-		ArcticTask<OSClientV3, SecurityGroup> group = (ArcticTask<OSClientV3, SecurityGroup>) getSecurityGroupTasks().get(asgr.getSecGroup());
+		ArcticTask<OSClientV3, SecurityGroup> group = (ArcticTask<OSClientV3, SecurityGroup>) context.getSecurityGroupTasks().get(asgr.getSecGroup());
 		
-		ArcticTask<OSClientV3, SecurityGroupRule> rule = new ArcticTask<OSClientV3, SecurityGroupRule>(5, getClient(), List.of(group)) {
+		ArcticTask<OSClientV3, SecurityGroupRule> rule = new ArcticTask<OSClientV3, SecurityGroupRule>(5, context.getClient(), List.of(group)) {
 			public SecurityGroupRule action() {
 				//String startMessage = String.format("Creating Security Rule: %s %s %s-%s", dir, protocol, String.valueOf(r1), String.valueOf(r2));
 				//IcebergViewer.sendConsoleBuildUpdate(re, new ConsoleMessage(startMessage));
