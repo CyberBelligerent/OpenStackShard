@@ -81,7 +81,8 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		System.out.println("\tDomain: " + domain);
 		
 		Config osConfig = Config.newConfig()
-	            .withSSLVerificationDisabled();
+	            .withSSLVerificationDisabled()
+	            .withHostnameVerifier((s, v)->false);
 		
 		OSClientV3 mainOSC = OSFactory.builderV3()
 				.withConfig(osConfig)
