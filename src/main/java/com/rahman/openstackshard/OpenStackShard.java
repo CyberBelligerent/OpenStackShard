@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
-import org.openstack4j.core.transport.Config;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.compute.BDMDestType;
 import org.openstack4j.model.compute.BDMSourceType;
@@ -73,6 +72,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		
 		String domain = config.getConfigurationOrDefault("domain", "Default");
 		
+		System.out.println("Running profile from: " + config.getUsername());
 		System.out.println("Connecting with the following options:");
 		System.out.println("\tEndpoint: " + endpoint);
 		System.out.println("\tUsername: " + username);
@@ -80,12 +80,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		System.out.println("\tProjectID: " + projectId);
 		System.out.println("\tDomain: " + domain);
 		
-		Config osConfig = Config.newConfig()
-	            .withSSLVerificationDisabled()
-	            .withHostnameVerifier((s, v)->false);
-		
 		OSClientV3 mainOSC = OSFactory.builderV3()
-				.withConfig(osConfig)
 				.endpoint(endpoint)
 				.credentials(username, password, Identifier.byName(domain))
 				.scopeToProject(Identifier.byId(projectId))
