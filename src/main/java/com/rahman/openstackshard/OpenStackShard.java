@@ -143,6 +143,9 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 				}
 				scb.networks(networkIds);
 				Server s = OSFactory.clientFromToken(getClient().getToken()).compute().servers().boot(scb.build());
+				
+				ah.setProvidereId(s.getId());
+				
 				return s;
 			}
 			
@@ -187,6 +190,9 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.gateway(an.getIpGateway())
 						.build());
 				netObj.getSubnets().add(s.getId());
+				
+				an.setProvidereId(netObj.getId());
+				
 				return netObj;
 			}
 
@@ -247,6 +253,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 					client.networking().router().attachInterface(r.getId(), AttachInterfaceType.SUBNET, net.getResource().getSubnets().get(0));
 				}
 				
+				ar.setProvidereId(r.getId());
 				return r;
 			}
 
@@ -271,6 +278,8 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.imageRef(av.getImageId())
 						.bootable(av.isBootable())
 						.build());
+				
+				av.setProvidereId(v.getId());
 				return v;
 			}
 
