@@ -125,8 +125,8 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 				
 				scb.configDrive(true);
 				scb.name(ah.getName());
-				scb.flavor(ah.getFlavor());
-				scb.image(ah.getImageId());
+				scb.flavor(ah.getExtraVariables().get("flavorId"));
+				scb.image(ah.getExtraVariables().get("osId"));
 				for(ArcticTask<OSClientV3, Volume> vol : volumes) {
 					scb.blockDevice(Builders.blockDeviceMapping()
 							.uuid(vol.getResource().getId())
@@ -144,7 +144,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 				scb.networks(networkIds);
 				Server s = OSFactory.clientFromToken(getClient().getToken()).compute().servers().boot(scb.build());
 				
-				ah.setProvidereId(s.getId());
+				ah.setProviderId(s.getId());
 				
 				return s;
 			}
@@ -191,7 +191,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.build());
 				netObj.getSubnets().add(s.getId());
 				
-				an.setProvidereId(netObj.getId());
+				an.setProviderId(netObj.getId());
 				
 				return netObj;
 			}
@@ -253,7 +253,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 					client.networking().router().attachInterface(r.getId(), AttachInterfaceType.SUBNET, net.getResource().getSubnets().get(0));
 				}
 				
-				ar.setProvidereId(r.getId());
+				ar.setProviderId(r.getId());
 				return r;
 			}
 
@@ -279,7 +279,7 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 						.bootable(av.isBootable())
 						.build());
 				
-				av.setProvidereId(v.getId());
+				av.setProviderId(v.getId());
 				return v;
 			}
 
