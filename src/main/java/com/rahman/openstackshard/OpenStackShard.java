@@ -1,15 +1,22 @@
 package com.rahman.openstackshard;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Identifier;
+import org.openstack4j.model.common.Payloads;
 import org.openstack4j.model.compute.BDMDestType;
 import org.openstack4j.model.compute.BDMSourceType;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.builder.ServerCreateBuilder;
+import org.openstack4j.model.image.v2.ContainerFormat;
+import org.openstack4j.model.image.v2.DiskFormat;
+import org.openstack4j.model.image.v2.Image;
 import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Network;
@@ -442,6 +449,66 @@ public class OpenStackShard extends ShardProviderTmpl<OSClientV3> {
 		rule.setOnComplete(sgr -> asgr.setProviderId(sgr.getId()));
 
 		return rule;
+	}
+
+	@Override
+	protected boolean templateExists(ShardRunningContext<OSClientV3> context, String name) {
+		if (name == null || name.isBlank()) return false;
+		try {
+			OSClientV3 client = OSFactory.clientFromToken(context.getClient().getToken());
+			return client.imagesV2().list().stream()
+					.anyMatch(i -> name.equals(i.getName()));
+		} catch (Exception e) {
+			System.err.println("[templateExists] failed for '" + name + "': " + e.getMessage());
+			return false;
+		}
+	}
+
+	@Override
+	protected String uploadTemplate(ShardRunningContext<OSClientV3> context, Path filePath, String name) {
+		if (filePath == null || !Files.exists(filePath)) {
+			System.err.println("[uploadTemplate] file not found: " + filePath);
+			return null;
+		}
+		if (name == null || name.isBlank()) {
+			System.err.println("[uploadTemplate] name is blank");
+			return null;
+		}
+
+		String lower = filePath.getFileName().toString().toLowerCase();
+		boolean isIso = lower.endsWith(".iso");
+		DiskFormat diskFormat = isIso ? DiskFormat.ISO : DiskFormat.QCOW2;
+
+		try {
+			OSClientV3 client = OSFactory.clientFromToken(context.getClient().getToken());
+
+			Image image = client.imagesV2().create(Builders.imageV2()
+					.name(name)
+					.containerFormat(ContainerFormat.BARE)
+					.diskFormat(diskFormat)
+					.build());
+			if (image == null || image.getId() == null) {
+				System.err.println("[uploadTemplate] Glance create returned null for '" + name + "'");
+				return null;
+			}
+			System.out.println("[uploadTemplate] image '" + name + "' allocated id=" + image.getId());
+
+			ActionResponse upload = client.imagesV2().upload(image.getId(),
+					Payloads.create(filePath.toFile()), image);
+			if (upload == null || !upload.isSuccess()) {
+				String fault = upload == null ? "null response" : upload.getFault();
+				System.err.println("[uploadTemplate] upload failed for '" + name + "': " + fault);
+				client.imagesV2().delete(image.getId());
+				return null;
+			}
+
+			System.out.println("[uploadTemplate] image '" + name + "' uploaded id=" + image.getId());
+			return image.getId();
+		} catch (Exception e) {
+			System.err.println("[uploadTemplate] failed for '" + name + "': " + e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
